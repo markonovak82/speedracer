@@ -10,9 +10,10 @@ $(document).ready(function () {
 function Game (options) {
 	this.baseURL            = 'http://www.killerbee.si/speedracer/';
     this.wheelPosition      = 0;
-    this.speed              = 0;
+    this.speed              = 200;
     this.speedArray         = [];
     this.wheelArray         = [];
+    this.obstaclesArray     = [];
     this._slidingWindow     = 3;
     this._speedMax          = 200;
     this._speedMin          = 50;
@@ -22,6 +23,9 @@ function Game (options) {
     this._gameWidth         = $(document).width();
     this._gameHeight        = $(document).height();
     this._grassWidth        = $('.grass').width();
+    this._numLanes          = 12;
+    this._gameContainer     = $('.container');
+    this.stopObstacles      = false;
 
     this._road = {
         node: $('.road'),
@@ -50,7 +54,7 @@ function Game (options) {
     this._car = {
         node: $('.car'),
         position: { 
-            x: Math.round(this._road.size.width / 2), 
+            x: Math.round(this._gameWidth / 2), 
             y: parseInt($('.car').css('bottom'), 10) 
         },
         size: { 
@@ -78,17 +82,17 @@ Game.prototype.deviceOrientation = function (e) {
         speedTotal = 0,
         wheelTotal = 0;
 
-    if (e.gamma < -45 && e.gamma > -90) {
-        this.speedArray.push(Math.round((90 + e.gamma) * this._speedFactor));
+    // if (e.gamma < -45 && e.gamma > -90) {
+    //     this.speedArray.push(Math.round((90 + e.gamma) * this._speedFactor));
         
-        if (this.speedArray.length > this._slidingWindow) this.speedArray.splice(0,1);
+    //     if (this.speedArray.length > this._slidingWindow) this.speedArray.splice(0,1);
         
-        for (var i = 0; i < this.speedArray.length; i++) {
-            speedTotal += this.speedArray[i];
-        }
+    //     for (var i = 0; i < this.speedArray.length; i++) {
+    //         speedTotal += this.speedArray[i];
+    //     }
 
-        this.speed = Math.min(200, Math.max(50, Math.round(speedTotal / this.speedArray.length)));
-    }
+    //     this.speed = Math.min(200, Math.max(50, Math.round(speedTotal / this.speedArray.length)));
+    // }
 
     if (e.beta < 90 && e.beta > -90)
         this.wheelArray.push(e.beta);
@@ -104,6 +108,9 @@ Game.prototype.deviceOrientation = function (e) {
 
 Game.prototype.start = function () {
     this.startTime = +new Date;
+
+    this.triggerObstacles();
+
 	this.tick();
 };
 
@@ -134,11 +141,22 @@ Game.prototype.tick = function () {
 Game.prototype.update = function (elapsed, countdownTime) {
     // car on grass
     if (this._car.position.x < this._grassWidth - Math.round(this._car.size.width / 2) || this._car.position.x > this._gameWidth - this._grassWidth - Math.round(this._car.size.width / 2)) {
-        this.currentSpeed = Math.round(this.speed / 2);
+        this.currentSpeed = Math.round(this.speed / 1.5);
         this.carTwitching = true;
     } else {
         this.currentSpeed = this.speed;
         this.carTwitching = false;
+    }
+
+    // update obstacles
+    if (this.obstaclesArray.length > 1) {
+        for (var i = 0; i < this.obstaclesArray.length; i++) {
+            this.obstaclesArray[i].position.y += Math.round((this.currentSpeed * elapsed) / 1000);
+            if (this.obstaclesArray[i].position.y > this._gameHeight) {
+                this.obstaclesArray[i].node.remove();
+                this.obstaclesArray.splice(i, 1);
+            }
+        }
     }
 
     // update road position
@@ -169,6 +187,53 @@ Game.prototype.update = function (elapsed, countdownTime) {
     }
 };
 
+Game.prototype.draw = function () {
+    this._speedometer.node.html(this.currentSpeed < 20 ? 0 + 'Pxs' : this.currentSpeed + 'Pxs');
+    this._road.node.css({ '-webkit-transform': 'translate3D(0, ' + this._road.position.y + 'px, 0)' });
+    this._grassLeft.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassLeft.position.y + 'px, 0)' });
+    this._grassRight.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassRight.position.y + 'px, 0)' });
+    this._car.node.css({ '-webkit-transform': 'translate3D(' + this._car.position.x + 'px, 0, 0) rotateZ(' + this._car.rotation + 'deg)' });
+    
+    if (this.obstaclesArray.length > 0) {
+        for (var i = 0; i < this.obstaclesArray.length; i++) {
+            this.obstaclesArray[i].node.css({ '-webkit-transform': 'translate3D(' + this.obstaclesArray[i].position.x + 'px, ' + this.obstaclesArray[i].position.y + 'px, 0)' });
+        }
+    }
+};
+
+Game.prototype.triggerObstacles = function () {
+    var self = this,
+        randomTimeOffset = getRandom(100,400),
+        randomLane;
+
+    setTimeout(function () {
+        self.createObstacle();
+
+        if (!self.stopObstacles) self.triggerObstacles();
+    }, randomTimeOffset);
+};
+
+Game.prototype.createObstacle = function () {
+    var obstacle,
+        type = getRandom(1,5),
+        lane = getRandom(1,this._numLanes);
+
+    obstacle = {
+        node: $('<div></div>').addClass('obstacle').addClass('type-' + type),
+        type: type,
+        lane: lane,
+        position: { x: (((lane - 1) * Math.round((this._gameWidth - (2 * this._grassWidth)) / this._numLanes))) + this._grassWidth, y: -50 },
+        speed: type == 5 ? 80 : 0
+    };
+
+    this.obstaclesArray.push(obstacle);
+    this._gameContainer.append(obstacle.node);
+};
+
+Game.prototype.destroyObstacle = function (obstacleId) {
+
+};
+
 Game.prototype.getCarRotation = function () {
     var carRotation;
 
@@ -186,14 +251,6 @@ Game.prototype.getCarPosition = function () {
 
 Game.prototype.checkCollision = function (obstacle) {
     // check collisions
-};
-
-Game.prototype.draw = function () {
-    this._speedometer.node.html(this.currentSpeed < 20 ? 0 + 'Pxs' : this.currentSpeed + 'Pxs');
-    this._road.node.css({ '-webkit-transform': 'translate3D(0, ' + this._road.position.y + 'px, 0)' });
-    this._grassLeft.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassLeft.position.y + 'px, 0)' });
-    this._grassRight.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassRight.position.y + 'px, 0)' });
-    this._car.node.css({ '-webkit-transform': 'translate3D(' + this._car.position.x + 'px, 0, 0) rotateZ(' + this._car.rotation + 'deg)' });
 };
 
 Game.prototype.setCarPosition = function () {

@@ -224,6 +224,7 @@
 	},
 	"file_history":
 	[
+		"/Users/marko/Projects/diplomska/README.md",
 		"/Users/marko/Projects/diplomska/index.html",
 		"/Users/marko/Projects/diplomska/images/car.png",
 		"/Users/marko/Projects/diplomska/js/global.js",
@@ -402,8 +403,8 @@
 						"selection":
 						[
 							[
-								6358,
-								6358
+								4231,
+								4231
 							]
 						],
 						"settings":
@@ -416,7 +417,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1925.0,
+						"translation.y": 479.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -438,8 +439,8 @@
 						"selection":
 						[
 							[
-								5510,
-								5510
+								6375,
+								6375
 							]
 						],
 						"settings":
@@ -452,7 +453,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2389.0,
+						"translation.y": 440.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
