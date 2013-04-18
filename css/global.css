@@ -68,17 +68,20 @@ body {
 	z-index: 101;
 }
 	.obstacle.type-1 {
-		background: red;
+		background: #444;
 	}
 	.obstacle.type-2 {
-		background: blue;
+		background: #333;
 	}
 	.obstacle.type-3 {
-		background: yellow;
+		background: #222;
 	}
 	.obstacle.type-4 {
-		background: black;
+		background: green;
 	}
 	.obstacle.type-5 {
-		background: white;
+		background: blue;
+	}
+	.obstacle.type-6 {
+		background: red;
 	}

@@ -151,10 +151,20 @@ Game.prototype.update = function (elapsed, countdownTime) {
     // update obstacles
     if (this.obstaclesArray.length > 1) {
         for (var i = 0; i < this.obstaclesArray.length; i++) {
-            this.obstaclesArray[i].position.y += Math.round((this.currentSpeed * elapsed) / 1000);
+            // if moving obstacle detects other obstacle in front of it, match speed
+            if (this.obstaclesArray[i].motion == 'moving') {
+                for (var j = 0; j < this.obstaclesArray.length; j++) {
+                    if (this.obstaclesArray[j].lane == this.obstaclesArray[i].lane && (this.obstaclesArray[j].position.y + 20) > this.obstaclesArray[i].position.y) {
+                        this.obstaclesArray[i].speed = this.obstaclesArray[j].speed;
+                    }
+                }
+            }
+
+            this.obstaclesArray[i].position.y += Math.round(((this.currentSpeed - this.obstaclesArray[i].speed) * elapsed) / 1000);
+
+            // destroy obstacle if off screen
             if (this.obstaclesArray[i].position.y > this._gameHeight) {
-                this.obstaclesArray[i].node.remove();
-                this.obstaclesArray.splice(i, 1);
+                this.destroyObstacle(i);
             }
         }
     }
@@ -208,22 +218,49 @@ Game.prototype.triggerObstacles = function () {
 
     setTimeout(function () {
         self.createObstacle();
-
         if (!self.stopObstacles) self.triggerObstacles();
     }, randomTimeOffset);
 };
 
 Game.prototype.createObstacle = function () {
     var obstacle,
-        type = getRandom(1,5),
-        lane = getRandom(1,this._numLanes);
+        type = getRandom(1,6),
+        lane = getRandom(1,this._numLanes),
+        speed;
+
+    switch (type) {
+        case 1:
+            speed = 0;
+            motion = 'static';
+            break;
+        case 2:
+            speed = 0;
+            motion = 'static';
+            break;
+        case 3:
+            speed = 0;
+            motion = 'static';
+            break;
+        case 4:
+            speed = 50;
+            motion = 'moving';
+            break;
+        case 5:
+            speed = 80;
+            motion = 'moving';
+            break;
+        case 6:
+            speed = 100;
+            motion = 'moving';
+    }
 
     obstacle = {
         node: $('<div></div>').addClass('obstacle').addClass('type-' + type),
         type: type,
         lane: lane,
+        motion: motion,
         position: { x: (((lane - 1) * Math.round((this._gameWidth - (2 * this._grassWidth)) / this._numLanes))) + this._grassWidth, y: -50 },
-        speed: type == 5 ? 80 : 0
+        speed: speed
     };
 
     this.obstaclesArray.push(obstacle);
@@ -231,7 +268,8 @@ Game.prototype.createObstacle = function () {
 };
 
 Game.prototype.destroyObstacle = function (obstacleId) {
-
+    this.obstaclesArray[obstacleId].node.remove();
+    this.obstaclesArray.splice(obstacleId, 1);
 };
 
 Game.prototype.getCarRotation = function () {
@@ -251,6 +289,7 @@ Game.prototype.getCarPosition = function () {
 
 Game.prototype.checkCollision = function (obstacle) {
     // check collisions
+    // you will set this.stopObstacles on hit and set speed to 0
 };
 
 Game.prototype.setCarPosition = function () {
