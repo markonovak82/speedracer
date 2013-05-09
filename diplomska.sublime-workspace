@@ -4,8 +4,64 @@
 		"selected_items":
 		[
 			[
+				"obsta",
+				"obstaclesArray"
+			],
+			[
+				"ba",
+				"background-size"
+			],
+			[
 				"car",
-				"carRotation"
+				"carHitpoint"
+			],
+			[
+				"obstacle",
+				"obstacleHitpoint"
+			],
+			[
+				"curre",
+				"currentSpeed"
+			],
+			[
+				"obs",
+				"obstaclesArray"
+			],
+			[
+				"ca",
+				"carHitpoint"
+			],
+			[
+				"game",
+				"gameRunning"
+			],
+			[
+				"speed",
+				"speed"
+			],
+			[
+				"_game",
+				"_gameWidth"
+			],
+			[
+				"_ga",
+				"_gameHeight"
+			],
+			[
+				"la",
+				"_lanes"
+			],
+			[
+				"rad",
+				"randomTimeOffset"
+			],
+			[
+				"get",
+				"getRandom"
+			],
+			[
+				"random",
+				"randomTimeOffset"
 			],
 			[
 				"c",
@@ -14,10 +70,6 @@
 			[
 				"whee",
 				"wheelPosition"
-			],
-			[
-				"_game",
-				"_gameWidth"
 			],
 			[
 				"_grass",
@@ -42,10 +94,6 @@
 			[
 				"_spee",
 				"_speedMax"
-			],
-			[
-				"speed",
-				"speedTotal"
 			],
 			[
 				"_sp",
@@ -86,14 +134,6 @@
 			[
 				"cure",
 				"currentOrient"
-			],
-			[
-				"curre",
-				"currentOrient"
-			],
-			[
-				"ba",
-				"background-size"
 			],
 			[
 				"b",
@@ -163,7 +203,7 @@
 			"file": "index.php",
 			"settings":
 			{
-				"buffer_size": 614,
+				"buffer_size": 578,
 				"line_ending": "Unix"
 			}
 		},
@@ -171,7 +211,7 @@
 			"file": "css/global.css",
 			"settings":
 			{
-				"buffer_size": 1072,
+				"buffer_size": 1842,
 				"line_ending": "Unix"
 			}
 		},
@@ -179,15 +219,7 @@
 			"file": "js/global.js",
 			"settings":
 			{
-				"buffer_size": 7499,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "function Game (options) {\n    this.lastUpdateTime         = null;\n    this.startTime              = null;\n    this.countdownTime          = null;\n    this.obstacleType           = null;\n    this.obstacleColumn         = null;\n    this.collision              = false;\n    this.stopCountdown          = false;\n    this.crashHide              = false;\n    this.flipped                = false;\n    this.stopObstacles          = false;\n    this.steps                  = 0;\n    this._speed                 = 458;  // pixels per second\n    this._rotation              = 720;  // degrees per second\n    this._totalItems            = 28;   // number of obstacles\n    this._obstacleTimeoutMin    = 300;  // in milliseconds\n    this._obstacleTimeoutMax    = 600;  // in milliseconds\n    this._countdownValue        = 15;   // seconds\n    this._moveOffset            = 200;  // move player left right in pixels\n    this._moveLimitLeft         = 3;    // in pixels  \n    this._moveLimitRight        = 603;  // in pixels\n    this._moveSpeed             = 50;   // in milliseconds\n    this._adWidth               = 768;\n    this._adHeight              = 916;\n    this._dad                   = this.getObj('dad');\n    this._countdown             = this.getObj('countdown');\n    this._grass                 = this.getObj('grass');\n    this._overlay               = this.getObj('overlay');\n    this._crash                 = this.getObj('crash');\n    this._finish                = this.getObj('finish');\n\n    if (options) {\n        for (var prop in options) {\n            if (options.hasOwnProperty(prop)) {\n                this[prop] = options[prop];\n            }\n        }\n    }\n\n    this.tick = bind(this, this.tick);\n}\n\nGame.prototype.start = function (callback) {\n    var self = this;\n\n    // dad init\n    self._dad.hit = false;\n\n    // finish line\n    self._finish.drop = false;\n\n    // set start time and value for countdown\n    self.startTime = +new Date;\n    self._countdown.node.firstChild.innerHTML = self._countdownValue;\n\n    // obstacles init\n    self.obstacles = Array(7);\n    for (i = 0; i < 7; i++) {\n        self.obstacles[i] = Array(4);\n        for (j = 0; j < 4; j++) {\n            self.obstacles[i][j] = self.getObj('obstacle' + (i + 1) + (j + 1));\n            self.obstacles[i][j].drop = false;\n            self.obstacles[i][j].dirty = false;\n        }\n    }\n\n    // clear obstacle interval flags\n    self.obstacleType   = null;\n    self.obstacleColumn = null;\n    self.stopObstacles  = false;\n\n    self.triggerObstacles();\n    self.tick();\n\n    callback && callback();\n};\n\nGame.prototype.triggerObstacles = function () {\n    var self = this,\n        obstacleTimeout;\n\n    obstacleTimeout = self.getRandom(self._obstacleTimeoutMin, self._obstacleTimeoutMax);\n\n    // shoot obstacle every second\n    setTimeout(function () {\n        // first obstacle must be a bear in user's position\n        if (!self.obstacleType && !self.obstacleColumn) {\n            self.obstacleType       = 0;\n            self.obstacleColumn     = 2;\n        } else {\n            self.obstacleType       = self.getRandom(0,6);\n            self.obstacleColumn     = self.getRandom(0,3);    \n        }\n\n        if (!self.obstacles[self.obstacleType][self.obstacleColumn].drop)\n            self.obstacles[self.obstacleType][self.obstacleColumn].drop = true;\n\n        if (!self.stopObstacles) self.triggerObstacles();\n    }, obstacleTimeout);\n};\n\nGame.prototype.tick = function () {\n    var self = this,\n        drawn,\n        elapsed,\n        currentTime,\n        countdownTime;\n\n    self._rafId = requestAnimationFrame(this.tick);\n\n    currentTime = +new Date;\n    if (self.lastUpdateTime == null)\n        self.lastUpdateTime = currentTime;\n\n    elapsed = currentTime - self.lastUpdateTime;\n    countdownTime = currentTime - self.startTime\n\n    self.steps++;\n\n    self.update(elapsed, countdownTime);\n    self.draw();\n        \n    self.lastUpdateTime = currentTime;    \n};\n\nGame.prototype.update = function (elapsed, countdownTime) {\n    var self = this,\n        obstacle, grass;\n\n    // update countdown\n    if (!self.stopCountdown) {\n        self.countdownTime = Math.floor(self._countdownValue - (countdownTime / 1000));\n    }\n\n    // stop countdown when 0\n    if (self.countdownTime == 0) {\n        self.stopCountdown = true;\n    }\n    // show finish line when 1\n    if (self.countdownTime == 1) {\n        self.showFinish();\n    }\n\n    // update obstacles positions\n    for (i = 0; i < 7; i++) {\n        for (j = 0; j < 4; j++) {\n            obstacle = self.obstacles[i][j];\n            if (obstacle.drop) {\n                obstacle.dirty = true;\n                obstacle.position.y -= Math.round((self._speed * elapsed) / 1000);\n                \n                if (obstacle.position.y < 0 - obstacle.size.height) {\n                    obstacle.drop = false;\n                    obstacle.position.y = self._adHeight;\n                }\n\n                if (self._finish.position.y > self._dad.position.y + self._dad.size.height) self.checkCollision(obstacle);\n            }\n        }\n    }\n\n    // update finish line\n    if (self._finish.drop) {\n        self._finish.position.y -= Math.round((self._speed * elapsed) / 1000);\n\n        if (self._finish.position.y < 0 - self._finish.size.height) {\n            self._result = 'success';\n            self.stop();\n        }\n    }\n\n    // update grass position\n    self._grass.position.y -= Math.round((self._speed * elapsed) / 1000);\n    if (self._grass.position.y <= -self._adHeight) {\n        self._grass.position.y = 0;\n    }\n\n    // update crash position\n    self._crash.position.x = self._dad.position.x;\n    self._crash.position.y = self._dad.position.y;\n\n    // update dad position\n    if (self._dad.hit) {\n        self._dad.position.y -= Math.round((self._speed * elapsed) / 1000);\n        self._dad.rotation += Math.round((self._rotation * elapsed) / 1000);\n\n        // update crash opacity\n        if (self._crash.opacity < 100 && !self.crashHide) {\n            self._crash.opacity += 10;    \n        } else if (self._crash.opacity > 0) {\n            self.crashHide = true;\n            self._crash.opacity -= 5;\n        }\n\n        if (self._dad.position.y < 0 - self._dad.size.height) {\n            self._result = 'fail';\n            self.stop();\n        }\n    }\n};\n\nGame.prototype.checkCollision = function (obstacle) {\n    var self = this,\n        position = {};\n\n    // check dad's center position to obstacle's center position for y axis\n    if (Math.abs((self._dad.position.y + self._dad.size.height / 2) - (obstacle.position.y + obstacle.size.height / 2)) < 10 && Math.abs(self._dad.position.x - obstacle.position.x) < self._dad.size.height / 2) {\n        if (!self.collision) {\n            self.collision = true;\n            self._dad.hit = true;\n\n            if (!self.crashAnimation) {\n                self.crashAnimation = true;\n\n                self._crash.position.x = self._dad.position.x;\n                self._crash.position.y = self._dad.position.y;\n                self._crash._refreshDisplayState();\n\n                self.animate(self._crash, self._crash.position.x, self._crash.position.y, null, null, null, 100, 60, function () {\n                    setTimeout(function () {\n                        self.animate(self._crash, self._crash.position.x, self._crash.position.y, null, null, null, 0, 60, noop);\n                    }, 200);\n                });\n            }\n        }\n    }\n};\n\nGame.prototype.draw = function () {\n    var self = this,\n        obstacle;\n\n    // redraw countdown\n    if (!self.stopCountdown) self._countdown.node.firstChild.innerHTML = self.countdownTime;\n\n    // redraw obstacles\n    for (i = 0; i < 7; i++) {\n        for (j = 0; j < 4; j++) {\n            obstacle = self.obstacles[i][j];\n            if (obstacle.dirty) {\n                obstacle.node.style.webkitTransform = 'translate(' + obstacle.position.x + 'px, ' + obstacle.position.y + 'px)'\n                obstacle.dirty = false;\n            }\n        }\n    }\n\n    // redraw finish line\n    if (self._finish.drop) {\n        self._finish.node.style.webkitTransform = 'translate(' + self._finish.position.x + 'px, ' + self._finish.position.y + 'px)';    \n    }\n    \n    // redraw hidden crash\n    self._crash.node.style.webkitTransform = 'translate(' + self._crash.position.x + 'px, ' + self._crash.position.y + 'px)';\n\n    // walking animation\n    if (self.steps % 10 === 0) {\n        if (self.flipped) {\n            self.flipped = false;\n            self._dad.node.firstChild.firstChild.style.webkitTransform = 'rotateY(0deg)';\n        } else {\n            self.flipped = true;\n            self._dad.node.firstChild.firstChild.style.webkitTransform = 'rotateY(180deg)';\n        }\n    }\n\n    // redraw dad\n    if (self._dad.hit) {\n        // DIV component is not traslated on init, that's why we have to use different translate here, check css top to check\n        // if you want the same effect as image objects, you need to substract the top position\n        self._dad.node.style.webkitTransform = 'translate(' + (self._dad.position.x - parseInt(self._dad.node.style.left)) + 'px, ' + (self._dad.position.y - parseInt(self._dad.node.style.top)) + 'px) rotate(' + self._dad.rotation + 'deg)';\n        self._crash.node.style.opacity = self._crash.opacity;\n    }\n\n    // redraw grass\n    self._grass.node.style.webkitTransform = 'translateY(' + self._grass.position.y + 'px)';\n};\n\nGame.prototype.moveDad = function (direction, callback) {\n    var self = this,\n        position;\n\n    position = self._dad.position.x;\n    position += (direction === 'left') ? -self._moveOffset : self._moveOffset;    \n\n    // make sure dad doesn't go off screen\n    if (position >= self._moveLimitLeft && position <= self._moveLimitRight)\n        self.animate(self._dad, position, self._dad.position.y, null, null, null, null, self._moveSpeed, callback);\n};\n\nGame.prototype.showFinish = function () {\n    var self = this;\n\n    self._finish.drop = true;\n    self.stopObstacles = true;\n}\n\nGame.prototype.stop = function () {\n    var self = this;\n\n    // stop requestanimationframe\n    if (self._rafId)\n        cancelAnimationFrame(self._rafId);\n    self._rafId = null;\n\n    // reset values\n    self.collision = false;\n    self.lastUpdateTime = null;\n\n    // clear stop obstacles\n    self.stopObstacles = true;\n\n    // clear countdown block\n    self.stopCountdown = false;\n\n    // clear crash hide\n    self.crashHide = false;\n\n    // show overlay\n    self._overlay.showAction({}, function () {\n        self.animate(self._overlay, 0, 0, null, null, null, 100, 500, function () {\n            if (self._result == 'success') {\n                self.goToScreen('End Success');\n            } else {\n                self.goToScreen('End Fail');\n            }\n        });\n    });\n};\n\nfunction bind (ctx, fn) {\n    return function () {\n        fn.apply(ctx, arguments);\n    };\n}\n\nGame.prototype.animate = function(object, x, y, width, height, rotation, opacity, duration, callback) {\n    object.animateAction(\n        {\n            properties: {\n                position: {\n                    x: Math.floor(x),\n                    y: Math.floor(y)\n                },\n                size: {\n                    width: width,\n                    height: height\n                },\n                zIndex: null,\n                opacity: opacity,\n                rotation: rotation\n            },\n            duration: duration\n        },\n        function () {\n            callback && callback();\n        }\n    );\n};\n\nGame.prototype.goToScreen = function (name) {\n    var self = this,\n        component = self._dad,\n        unit = component.parentUnit,\n        found = false;\n    \n    unit.screens.forEach(function (screen) {\n        if (!found && screen.title == name) {\n            unit.goToScreenAction({screen: screen}, function () {\n                component.parentScreen.resetAction({}, noop);    \n            });\n            found = true;\n        }\n    });\n    \n    return found;\n};\n\nGame.prototype.getObj = function (name) {\n    return Creative.sharedInstance.getObjectByName(name);\n};\n\nGame.prototype.getRandom = function (from, to) {\n    return Math.floor(Math.random() * (to - from + 1) + from);\n};\n\n// http://paulirish.com/2011/requestanimationframe-for-smart-animating/\n// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating\n\n// requestAnimationFrame polyfill by Erik Möller\n// fixes from Paul Irish and Tino Zijdel\n\n(function() {\n    var lastTime = 0;\n    var vendors = ['ms', 'moz', 'webkit', 'o'];\n    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {\n        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];\n        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];\n    }\n \n    if (!window.requestAnimationFrame)\n        window.requestAnimationFrame = function(callback, element) {\n            var currTime = Date.now();\n            var timeToCall = Math.max(0, 16 - (currTime - lastTime));\n            lastTime = currTime + timeToCall;\n            return window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);\n        };\n \n    if (!window.cancelAnimationFrame)\n        window.cancelAnimationFrame = function(id) {\n            clearTimeout(id);\n        };\n}());",
-			"settings":
-			{
-				"buffer_size": 13370,
+				"buffer_size": 12045,
 				"line_ending": "Unix"
 			}
 		}
@@ -280,6 +312,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"console",
+			"_carSteeringFactor",
+			"console",
 			"_wheel",
 			"_speed",
 			"prop(",
@@ -336,15 +371,15 @@
 					"file": "index.php",
 					"settings":
 					{
-						"buffer_size": 614,
+						"buffer_size": 578,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								265,
-								265
+								387,
+								387
 							]
 						],
 						"settings":
@@ -366,15 +401,15 @@
 					"file": "css/global.css",
 					"settings":
 					{
-						"buffer_size": 1072,
+						"buffer_size": 1842,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								111,
-								111
+								951,
+								951
 							]
 						],
 						"settings":
@@ -386,7 +421,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 179.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -396,15 +431,15 @@
 					"file": "js/global.js",
 					"settings":
 					{
-						"buffer_size": 7499,
+						"buffer_size": 12045,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4231,
-								4231
+								8651,
+								8651
 							]
 						],
 						"settings":
@@ -417,43 +452,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 479.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 3,
-					"settings":
-					{
-						"buffer_size": 13370,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6375,
-								6375
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 440.0,
+						"translation.y": 3927.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -478,18 +477,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.5,
 			1.0
 		],
 		"rows":
