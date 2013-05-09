@@ -13,6 +13,8 @@ function Game (options) {
     this.speed              = 0;
     this._maxSpeed          = 200;
     this._grassSpeed        = 120;
+    this._fullLife          = 10;
+    this.life               = this._fullLife;
     this.wheelArray         = [];
     this.obstaclesArray     = [];
     this._slidingWindow     = 3;
@@ -24,6 +26,7 @@ function Game (options) {
     this._grassWidth        = $('.grass').width();
     this._numLanes          = 12;
     this._gameContainer     = $('.container');
+    this._lifeBar           = $('.lifebar');
     this.stopObstacles      = false;
     this.obstaclesTriggered = false;
 
@@ -35,6 +38,7 @@ function Game (options) {
             height: 1024 
         }
     };
+
     this._grassLeft = {
         node: $('.grass.left'),
         position: { x: null, y: -1024 },
@@ -43,6 +47,7 @@ function Game (options) {
             height: 1024
         }
     };
+
     this._grassRight = {
         node: $('.grass.right'),
         position: { x: null, y: -1024 },
@@ -51,6 +56,7 @@ function Game (options) {
             height: 1024
         }
     };
+
     this._car = {
         node: $('.car'),
         size: { 
@@ -63,6 +69,7 @@ function Game (options) {
         },
         rotation: 0
     };
+
     this._carHitpoint = {
         node: $('.car-hitpoint'),
         position: {
@@ -70,6 +77,7 @@ function Game (options) {
             y: 300
         }
     }
+
     this._speedometer = {
         node: $('.speed')
     };
@@ -81,10 +89,24 @@ Game.prototype.init = function () {
 	// getting orientation data from window
 	window.addEventListener('deviceorientation', this.deviceOrientation.bind(this));
     
-    // set car to the right position
+    // set car to the initial position
     this._car.node.css({ '-webkit-transform': 'translate3D(' + this._car.position.x + 'px, 0, 0) rotateZ(' + this._car.rotation + 'deg)' });
 
+    // fill life
+    this.initLifeBar(this._fullLife);
+
     this.start();
+};
+
+Game.prototype.initLifeBar = function (value) {
+    for (var i = 0; i < value; i++) {
+        this._lifeBar.append('<li>&nbsp;</li>');
+    }
+};
+
+Game.prototype.decreaseLife = function () {
+    $('.lifebar li:last-child').remove();
+    this.life--;
 };
 
 Game.prototype.deviceOrientation = function (e) {
@@ -145,7 +167,6 @@ Game.prototype.update = function (elapsed, countdownTime) {
             this.obstaclesTriggered = true;
         } 
     }
-        
 
     // car on grass
     if (this._car.position.x < this._grassWidth - Math.round(this._car.size.width / 2) || this._car.position.x > this._gameWidth - this._grassWidth - Math.round(this._car.size.width / 2)) {
@@ -156,8 +177,6 @@ Game.prototype.update = function (elapsed, countdownTime) {
         this.carTwitching = false;
     }
     this.currentSpeed = this.speed;
-
-    var basicYPosition = Math.round((this.currentSpeed * elapsed) / 1000);
 
     // update obstacles
     if (this.obstaclesArray.length > 1) {
@@ -179,6 +198,8 @@ Game.prototype.update = function (elapsed, countdownTime) {
             }
         }
     }
+
+    var basicYPosition = Math.round((this.currentSpeed * elapsed) / 1000);
 
     // update road position
     this._road.position.y += basicYPosition;
@@ -279,6 +300,7 @@ Game.prototype.createObstacle = function () {
             x: (((lane - 1) * Math.round((this._gameWidth - (2 * this._grassWidth)) / this._numLanes))) + this._grassWidth + 2, 
             y: -50 
         },
+        size: null,
         speed: speed
     };
 
@@ -306,6 +328,8 @@ Game.prototype.getCarPosition = function () {
 };
 
 Game.prototype.checkCollisions = function () {
+    var obstacleHit;
+
     for (var i = 0; i < this.obstaclesArray.length; i++) {
         var obstacleHitpoint = {
             x: Math.round(this.obstaclesArray[i].position.x + (this.obstaclesArray[i].size.width / 2)), // middle of the obstacle
@@ -316,16 +340,24 @@ Game.prototype.checkCollisions = function () {
             y: this._car.position.y // front of the car
         };
         if (Math.abs(obstacleHitpoint.x - carHitpoint.x) < this.obstaclesArray[i].size.width && obstacleHitpoint.y - carHitpoint.y > 0 && obstacleHitpoint.y - carHitpoint.y < this.obstaclesArray[i].size.height) {
-            if (!this.collisionDetected)
-                this.triggerCollision(this.obstaclesArray[i].type);
+            if (!this.collisionDetected) {
+                this.collisionDetected = true;
+                obstacleHit = this.obstaclesArray[i];
+                this.triggerCollision(this.obstaclesArray[i]);
+            }
+        } else if (obstacleHit === this.obstaclesArray[i]) {
+            this.collisionDetected = false;
         }
     }
 };
 
-Game.prototype.triggerCollision = function (obstacleType) {
-    alert('CRASH!!!!!, obstacle type: ' + obstacleType);
-    this.collisionDetected = true;
-    this.stopGame();
+Game.prototype.triggerCollision = function (obstacle) {
+    this.decreaseLife();
+    this.speed = this._grassSpeed;
+
+    if (this.life <= 0) {
+        this.stopGame();
+    }
 };
 
 Game.prototype.stopGame = function () {
@@ -334,6 +366,7 @@ Game.prototype.stopGame = function () {
     this.currentSpeed = 0;
     this.stopObstacles = true;
     this.gameRunning = false;
+    alert('GAME OVER!');
 };
 
 Game.prototype.setCarPosition = function () {

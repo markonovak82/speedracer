@@ -12,6 +12,7 @@
 			<div class="grass left"></div>
 			<div class="grass right"></div>
 			<div class="car"></div>
+			<ul class="lifebar"></ul>
 		</div>
 	</div>
 

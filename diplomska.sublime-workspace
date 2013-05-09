@@ -4,12 +4,24 @@
 		"selected_items":
 		[
 			[
-				"obsta",
-				"obstaclesArray"
+				"co",
+				"collisionDetected"
+			],
+			[
+				"_gras",
+				"_grassLeft"
 			],
 			[
 				"ba",
-				"background-size"
+				"background"
+			],
+			[
+				"mar",
+				"margin-right"
+			],
+			[
+				"obsta",
+				"obstaclesArray"
 			],
 			[
 				"car",
@@ -203,7 +215,7 @@
 			"file": "index.php",
 			"settings":
 			{
-				"buffer_size": 578,
+				"buffer_size": 607,
 				"line_ending": "Unix"
 			}
 		},
@@ -211,7 +223,7 @@
 			"file": "css/global.css",
 			"settings":
 			{
-				"buffer_size": 1842,
+				"buffer_size": 2091,
 				"line_ending": "Unix"
 			}
 		},
@@ -219,7 +231,7 @@
 			"file": "js/global.js",
 			"settings":
 			{
-				"buffer_size": 12045,
+				"buffer_size": 12651,
 				"line_ending": "Unix"
 			}
 		}
@@ -371,15 +383,15 @@
 					"file": "index.php",
 					"settings":
 					{
-						"buffer_size": 578,
+						"buffer_size": 607,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								387,
-								387
+								409,
+								409
 							]
 						],
 						"settings":
@@ -401,15 +413,15 @@
 					"file": "css/global.css",
 					"settings":
 					{
-						"buffer_size": 1842,
+						"buffer_size": 2091,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								951,
-								951
+								1359,
+								1359
 							]
 						],
 						"settings":
@@ -421,7 +433,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 179.0,
+						"translation.y": 345.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -431,15 +443,15 @@
 					"file": "js/global.js",
 					"settings":
 					{
-						"buffer_size": 12045,
+						"buffer_size": 12651,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8651,
-								8651
+								11065,
+								11065
 							]
 						],
 						"settings":
@@ -452,7 +464,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3927.0,
+						"translation.y": 4298.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

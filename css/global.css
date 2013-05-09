@@ -71,6 +71,23 @@ body {
 	position: absolute;
 	z-index: 1000;
 }
+.lifebar {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 60px;
+	height: 5px;
+	background: black;
+	padding: 1px 0 1px 1px;
+	z-index: 1000;
+}
+	.lifebar li {
+		float: left;
+		width: 5px;
+		height: 5px;
+		margin-right: 1px;
+		background: red;
+	}
 .obstacle {
 	position: absolute;
 	width: 5%;
