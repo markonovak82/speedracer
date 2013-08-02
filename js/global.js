@@ -20,8 +20,8 @@ function Game (options) {
     this._slidingWindow     = 3;
     this._carHandlingFactor = 2000;
     this._speedFactor       = 5;
-    this._gameWidth         = $(document).width();
-    this._gameHeight        = $(document).height();
+    this._gameWidth         = $('.container').width();
+    this._gameHeight        = $('.container').height();
     this.gameRunning        = false;
     this._grassWidth        = $('.grass').width();
     this._numLanes          = 12;
@@ -307,6 +307,7 @@ Game.prototype.createObstacle = function () {
     this.obstaclesArray.push(obstacle);
     this._gameContainer.append(obstacle.node);
 
+    // getting size after the obstacle is in DOM
     obstacle.size = {
         width: parseInt(obstacleNode.width(), 10),
         height: parseInt(obstacleNode.width(), 10)
@@ -328,30 +329,33 @@ Game.prototype.getCarPosition = function () {
 };
 
 Game.prototype.checkCollisions = function () {
-    var obstacleHit;
-
     for (var i = 0; i < this.obstaclesArray.length; i++) {
+        // get back center point of the obstacle
         var obstacleHitpoint = {
             x: Math.round(this.obstaclesArray[i].position.x + (this.obstaclesArray[i].size.width / 2)), // middle of the obstacle
             y: this.obstaclesArray[i].position.y + this.obstaclesArray[i].size.height // back of the obstacle
         };
+        // get front center point of the car
         var carHitpoint = {
             x: Math.round(this._car.position.x + (this._car.size.width / 2)), // middle of the car
             y: this._car.position.y // front of the car
         };
+        // if both center points are less than obstacle width away and car center point y coordinate is between obstacle y coordinate and obstacle's height trigger collision
         if (Math.abs(obstacleHitpoint.x - carHitpoint.x) < this.obstaclesArray[i].size.width && obstacleHitpoint.y - carHitpoint.y > 0 && obstacleHitpoint.y - carHitpoint.y < this.obstaclesArray[i].size.height) {
             if (!this.collisionDetected) {
                 this.collisionDetected = true;
-                obstacleHit = this.obstaclesArray[i];
+                // remember which obstacle is hit, we want to decrease life only once per obstacle
+                this.obstacleHit = this.obstaclesArray[i];
                 this.triggerCollision(this.obstaclesArray[i]);
             }
-        } else if (obstacleHit === this.obstaclesArray[i]) {
+        } else if (this.obstacleHit === this.obstaclesArray[i]) {
             this.collisionDetected = false;
         }
     }
 };
 
 Game.prototype.triggerCollision = function (obstacle) {
+    // decrease life and speed (speed is automatically increased to max speed)
     this.decreaseLife();
     this.speed = this._grassSpeed;
 
@@ -361,16 +365,13 @@ Game.prototype.triggerCollision = function (obstacle) {
 };
 
 Game.prototype.stopGame = function () {
+    // stop the game and do a cleanup
     window.removeEventListener('deviceorientation', this.deviceOrientation);
     this.speed = 0;
     this.currentSpeed = 0;
     this.stopObstacles = true;
     this.gameRunning = false;
     alert('GAME OVER!');
-};
-
-Game.prototype.setCarPosition = function () {
-    this._car.position.x = Math.round(this._gameWidth / 2);
 };
 
 /*

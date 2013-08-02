@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"obstacle",
+				"obstacleHit"
+			],
+			[
+				"obsta",
+				"obstaclesArray"
+			],
+			[
 				"co",
 				"collisionDetected"
 			],
@@ -20,16 +28,8 @@
 				"margin-right"
 			],
 			[
-				"obsta",
-				"obstaclesArray"
-			],
-			[
 				"car",
 				"carHitpoint"
-			],
-			[
-				"obstacle",
-				"obstacleHitpoint"
 			],
 			[
 				"curre",
@@ -231,7 +231,7 @@
 			"file": "js/global.js",
 			"settings":
 			{
-				"buffer_size": 12651,
+				"buffer_size": 13180,
 				"line_ending": "Unix"
 			}
 		}
@@ -433,7 +433,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 345.0,
+						"translation.y": 50.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -443,15 +443,15 @@
 					"file": "js/global.js",
 					"settings":
 					{
-						"buffer_size": 12651,
+						"buffer_size": 13180,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11065,
-								11065
+								1633,
+								1633
 							]
 						],
 						"settings":
@@ -464,7 +464,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4298.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
