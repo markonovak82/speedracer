@@ -308,7 +308,7 @@ Game.prototype.destroyObstacle = function (obstacleId) {
 
 Game.prototype.getCarRotation = function () {
     var carRotation = (this.carTwitching) ? this.wheelPosition + getRandom(-5,5) : this.wheelPosition;
-    return Math.min(70, carRotation);
+    return Math.min(70, carRotation / 2);
 };
 
 Game.prototype.getCarPosition = function () {
