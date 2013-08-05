@@ -1,0 +1,15 @@
+{
+  "name": "speedracer",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.3.4",
+    "socket.io": "~0.9.6"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
