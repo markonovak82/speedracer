@@ -11,7 +11,7 @@ function Game (options) {
 	this.baseURL            = 'http://www.killerbee.si/speedracer/';
     this.wheelPosition      = 0;
     this.speed              = 0;
-    this._maxSpeed          = 200;
+    this._maxSpeed          = 180;
     this._grassSpeed        = 120;
     this._fullLife          = 10;
     this.life               = this._fullLife;
@@ -78,8 +78,9 @@ function Game (options) {
         }
     }
 
-    this._speedometer = {
-        node: $('.speed')
+    this._speedGaugePointer = {
+        node: $('.speed-gauge img'),
+        rotation: -90
     };
 
     this.tick = bind(this, this.tick);
@@ -147,7 +148,7 @@ Game.prototype.tick = function () {
 
 Game.prototype.update = function (elapsed, countdownTime) {
     if (this.speed < this._maxSpeed && !this.carTwitching) {
-        this.speed += 2;
+        this.speed += 1;
     } else {
         if (!this.obstaclesTriggered) {
             this.triggerObstacles();
@@ -219,7 +220,10 @@ Game.prototype.update = function (elapsed, countdownTime) {
 };
 
 Game.prototype.draw = function () {
-    this._speedometer.node.html(this.currentSpeed < 20 ? 0 + 'Pxs' : this.currentSpeed + 'Pxs');
+    // rotate speedometer pin
+    this.currentSpeed < 20 ? 0 : this.currentSpeed;
+    this._speedGaugePointer.node.css({ '-webkit-transform': 'rotate(' + (this._speedGaugePointer.rotation + this.currentSpeed) + 'deg)' });
+
     this._road.node.css({ '-webkit-transform': 'translate3D(0, ' + this._road.position.y + 'px, 0)' });
     this._grassLeft.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassLeft.position.y + 'px, 0)' });
     this._grassRight.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassRight.position.y + 'px, 0)' });
@@ -283,8 +287,9 @@ Game.prototype.createObstacle = function () {
         type: type,
         lane: lane,
         motion: motion,
-        position: { 
-            x: (((lane - 1) * Math.round((this._gameWidth - (2 * this._grassWidth)) / this._numLanes))) + this._grassWidth + 2, 
+        position: {
+            // + 5 because of the lane's lines
+            x: (((lane - 1) * Math.round((this._gameWidth - (2 * this._grassWidth)) / this._numLanes))) + this._grassWidth + 5, 
             y: -50 
         },
         size: null,

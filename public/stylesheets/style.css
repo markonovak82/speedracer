@@ -9,122 +9,138 @@ body {
 }
 .center {
 	position: absolute;
-	/*top: 50%;
+	top: 50%;
 	left: 50%;
-	margin: -160px 0 0 -200px;*/
-	top: 0;
-	left: 0;
-	width: 320px;
-	height: 357px;
+	margin: -200px 0 0 -250px;
+	width: 500px;
+	height: 400px;
 }
 .container {
 	width: 100%;
 	height: 100%;
 	position: relative;
 	overflow: hidden;
+	-webkit-transform: translateZ(0);
 }
-.road {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 2048px;
-	background: url(../images/road.jpg) repeat;
-	background-size: 25%;
-	-webkit-transform: 'translate3d(0, -1024px, 0)';
-	z-index: 50;
-}
-.grass {
-	position: absolute;
-	top: 0;
-	width: 12.5%;
-	height: 2048px;
-	background: url(../images/grass.jpg) repeat;
-	background-size: 80%;
-	-webkit-transform: 'translate3d(0, -1024px, 0)';
-	z-index: 51;
-}
-	.grass.left {
+	.toolbar {
+		position: absolute;
+		top: 0;
 		left: 0;
+		width: 100%;
+		height: 39px;
+		background: url(/images/toolbar.png) top left no-repeat;
+		z-index: 900;
 	}
-	.grass.right {
-		right: 0;
+		.speed-gauge {
+			position: absolute;
+			top: 3px;
+			right: 79px;
+			width: 40px;
+			height: 22px;
+			background: url(/images/speed-gauge.png) top left no-repeat;
+			z-index: 1000;
+		}
+			.speed-gauge img {
+				transform: rotate(-90deg);
+				-ms-transform: rotate(-90deg); /* IE 9 */
+				-webkit-transform: rotate(-90deg); /* Safari and Chrome */
+				transform-origin: 3px 17px;
+				-webkit-transform-origin: 3px 17px;
+			}
+		.lifebar {
+			position: absolute;
+			top: 17px;
+			right: 10px;
+			width: 60px;
+			height: 5px;
+			background: #390b0b;
+			padding: 1px 0 1px 1px;
+			z-index: 1000;
+		}
+			.lifebar li {
+				float: left;
+				width: 5px;
+				height: 5px;
+				margin-right: 1px;
+				background: url(/images/lifebar-dot.png) top left no-repeat;
+			}
+	.road {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 2048px;
+		background: url(/images/road.jpg) repeat;
+		background-size: 25%;
+		/*-webkit-transform: 'translate3d(0, -1024px, 0)';*/
+		z-index: 50;
 	}
-.car {
-	position: absolute;
-	top: 300px;
-	left: 0;
-	width: 4%;
-	height: 8%;
-	background: url(../images/car.png) center center no-repeat;
-	background-size: 100%;
-	z-index: 100;
-}
-.speed {
-	font-size: 24px;
-	font-weight: bold;
-	color: white;
-	text-shadow: 0 1px 0 rgba(0,0,0,0.4);
-	text-align: center;
-	width: 50px;
-	height: 50px;
-	margin: 10px auto;
-	position: absolute;
-	z-index: 1000;
-}
-.lifebar {
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	width: 60px;
-	height: 5px;
-	background: black;
-	padding: 1px 0 1px 1px;
-	z-index: 1000;
-}
-	.lifebar li {
-		float: left;
-		width: 5px;
-		height: 5px;
-		margin-right: 1px;
-		background: red;
+	.grass {
+		position: absolute;
+		top: 0;
+		width: 12.5%;
+		height: 2048px;
+		background: url(/images/grass.jpg) repeat;
+		background-size: 80%;
+		/*-webkit-transform: 'translate3d(0, -1024px, 0)';*/
+		z-index: 51;
 	}
-.wheel {
-	margin: -75px 0 0 -75px;
-	width: 150px;
-	height: 150px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	background: url(../images/wheel.jpg) center center no-repeat;
-	-webkit-transform: rotate(90deg);
-}
-.obstacle {
-	position: absolute;
-	width: 5%;
-	height: 8%;
-	z-index: 101;
-}
-	.obstacle.type-1 {
-		height: 11%;
-		background: url(../images/obstacle1.png) center center no-repeat;
+		.grass.left {
+			left: 0;
+		}
+		.grass.right {
+			right: 0;
+		}
+	.car {
+		position: absolute;
+		top: 300px;
+		left: 0;
+		width: 20px;
+		height: 40px;
+		background: url(/images/car.png) center center no-repeat;
 		background-size: 100%;
+		z-index: 100;
 	}
-	.obstacle.type-2 {
-		background: #333;
+	.wheel {
+		margin: -75px 0 0 -75px;
+		width: 150px;
+		height: 150px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		background: url(/images/wheel.jpg) center center no-repeat;
+		-webkit-transform: rotate(90deg);
 	}
-	.obstacle.type-3 {
-		background: #222;
+	.obstacle {
+		position: absolute;
+		width: 20px;
+		height: 40px;
+		z-index: 101;
 	}
-	.obstacle.type-4 {
-		background: url(../images/obstacle4.png) center center no-repeat;
-		background-size: 100%;
-	}
-	.obstacle.type-5 {
-		background: url(../images/obstacle5.png) center center no-repeat;
-		background-size: 100%;
-	}
-	.obstacle.type-6 {
-		background: url(../images/obstacle6.png) center center no-repeat;
-		background-size: 100%;
-	}
+		.obstacle.type-1 {
+			height: 20px;
+			background: url(/images/obstacle1.png) center center no-repeat;
+			background-size: 100%;
+		}
+		.obstacle.type-2 {
+			height: 20px;
+			background: url(/images/obstacle2.png) center center no-repeat;
+			background-size: 100%;
+		}
+		.obstacle.type-3 {
+			height: 20px;
+			background: url(/images/obstacle3.png) center center no-repeat;
+			background-size: 100%;
+		}
+		.obstacle.type-4 {
+			background: url(/images/obstacle4.png) center center no-repeat;
+			background-size: 100%;
+		}
+		.obstacle.type-5 {
+			background: url(/images/obstacle5.png) center center no-repeat;
+			background-size: 100%;
+		}
+		.obstacle.type-6 {
+			background: url(/images/obstacle6.png) center center no-repeat;
+			background-size: 100%;
+		}

@@ -1,10 +1,11 @@
-var express = require('express'),
-	app     = require('express')(),
+var express	= require('express'),
+	app		= require('express')(),
 	server  = require('http').createServer(app),
-	io 	    = require('socket.io').listen(server);
+	io 	 	= require('socket.io').listen(server);
 
 // use heroku port or 3000, use static IP so it works on phone too
-server.listen(process.env.PORT || 3000, '192.168.0.77');
+server.listen(process.env.PORT || 3000, '192.168.0.82'); // work
+//server.listen(process.env.PORT || 3000, '192.168.11.4'); // home
 
 // set views and public path
 app.set('views', __dirname + '/views');
