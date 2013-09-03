@@ -1,5 +1,8 @@
 $(document).ready(function () {
-	window.game = new Game();
+	// create game object
+    window.game = new Game();
+
+    // init the game
 	game.init();
 });
 
@@ -8,28 +11,45 @@ $(document).ready(function () {
  */
 
 function Game (options) {
-	this.baseURL            = 'http://www.killerbee.si/speedracer/';
-    this.wheelPosition      = 0;
-    this.speed              = 0;
-    this._maxSpeed          = 180;
-    this._grassSpeed        = 120;
-    this._fullLife          = 10;
-    this.life               = this._fullLife;
-    this.wheelArray         = [];
-    this.obstaclesArray     = [];
-    this._carHandlingFactor = 3000;
-    this._speedFactor       = 5;
-    this._gameWidth         = $('.container').width();
-    this._gameHeight        = $('.container').height();
-    this.gameRunning        = false;
-    this._grassWidth        = $('.grass').width();
-    this._numLanes          = 12;
-    this._gameContainer     = $('.container');
-    this._lifeBar           = $('.lifebar');
-    this.stopObstacles      = false;
-    this.obstaclesTriggered = false;
-    this.socket             = io.connect(window.location.hostname);
+    // max car speed
+    this._maxSpeed = 180;
 
+    // max speed on grass
+    this._grassSpeed = 120;
+
+    // life or number of allowed hits
+    this._fullLife = 10;
+
+    // determines the steering of the car
+    this._carHandlingFactor = 3000;
+
+    // determines the acceleration of the car
+    this._speedFactor = 5;
+
+    // game container width
+    this._gameWidth = $('.container').width();
+
+    // game container height
+    this._gameHeight = $('.container').height();
+
+    // grass width to determine road width
+    this._grassWidth = $('.grass').width();
+
+    // number of different road lanes for obstacles
+    this._numLanes = 12;
+
+    // game nodes
+    this._gameContainer      = $('.container');
+    this._lifeBar            = $('.lifebar');
+    this._startButton        = $('.menu a');
+    this._playAgainButton    = $('.end a');
+    this._menu               = $('.menu');
+    this._end                = $('.end');
+
+    // socket io object
+    this._socket             = io.connect(window.location.hostname);
+
+    // road object
     this._road = {
         node: $('.road'),
         position: { x: 0, y: -1024 },
@@ -39,6 +59,7 @@ function Game (options) {
         }
     };
 
+    // left grass object
     this._grassLeft = {
         node: $('.grass.left'),
         position: { x: null, y: -1024 },
@@ -48,6 +69,7 @@ function Game (options) {
         }
     };
 
+    // right grass object
     this._grassRight = {
         node: $('.grass.right'),
         position: { x: null, y: -1024 },
@@ -57,6 +79,7 @@ function Game (options) {
         }
     };
 
+    // car object
     this._car = {
         node: $('.car'),
         size: { 
@@ -70,30 +93,87 @@ function Game (options) {
         rotation: 0
     };
 
+    // car hitpoint front center
     this._carHitpoint = {
         node: $('.car-hitpoint'),
         position: {
             x: Math.round(this._gameWidth / 2), 
             y: 300
         }
-    }
+    };
 
+    // explosion animation
+    this._explosion = {
+        node: $('.explosion'),
+        position: {
+            x: 0,
+            y: 0
+        },
+        size: {
+            width: parseInt($('.explosion').css('width'), 10), 
+            height: parseInt($('.explosion').css('height'), 10)
+        }
+    };
+
+    // speed gauge pointer which is rotated
     this._speedGaugePointer = {
         node: $('.speed-gauge img'),
         rotation: -90
     };
 
+    // reset all dynamic values at the beginning
+    this.reset();
+
+    // start tick aka gameloop
     this.tick = bind(this, this.tick);
 }
 
+Game.prototype.reset = function () {
+    this.speed              = 0;
+    this.currentSpeed       = 0;
+    this.stopObstacles      = true;
+    this.gameRunning        = false;
+    this.obstaclesTriggered = false;
+    this.wheelPosition      = 0;
+    this.speed              = 0;
+    this.life               = this._fullLife;
+    this.wheelArray         = [];
+    this.obstaclesArray     = [];
+    this.collisionDetected  = false;
+    this.obstacleHit        = null;
+
+    // remove all obstacles on the screen
+    $('.obstacle').remove();
+};
+
 Game.prototype.init = function () {
-    // set car to the initial position
-    this._car.node.css({ '-webkit-transform': 'translate3D(' + this._car.position.x + 'px, 0, 0) rotateZ(' + this._car.rotation + 'deg)' });
+    var self = this;
 
-    // fill life
-    this.initLifeBar(this._fullLife);
+    // attach event listener to start button
+    this._startButton.click(function(e){
+        e.preventDefault();
+        self.hideMenu();
+        self.start();
+    });
 
-    this.start();
+    // attach event listener to play again buton
+    this._playAgainButton.click(function(e){
+        e.preventDefault();
+        self.hideEnd();
+        self.start();
+    });
+};
+
+Game.prototype.hideMenu = function () {
+    this._menu.hide();
+};
+
+Game.prototype.hideEnd = function () {
+    this._end.hide();
+};
+
+Game.prototype.showEnd = function () {
+    this._end.show();
 };
 
 Game.prototype.initLifeBar = function (value) {
@@ -110,11 +190,20 @@ Game.prototype.decreaseLife = function () {
 Game.prototype.start = function () {
     var self = this;
 
+    // set car to the initial position
+    this._car.node.css({ '-webkit-transform': 'translate3D(' + Math.round(this._gameWidth / 2) + 'px, 0, 0) rotateZ(0deg)' });
+    this._car.position.x = Math.round(this._gameWidth / 2);
+    this._car.rotation = 0;
+
+    // fill life
+    this.initLifeBar(this._fullLife);
+
     this.startTime = +new Date;
 
     this.gameRunning = true;
+    this.stopObstacles = false;
 
-    this.socket.on('wheel', function (data) {
+    this._socket.on('wheel', function (data) {
         self.wheelPosition = data.position;    
     });
 
@@ -178,6 +267,7 @@ Game.prototype.update = function (elapsed, countdownTime) {
                 }
             }
 
+            // update obstacle y position
             this.obstaclesArray[i].position.y += Math.round(((this.currentSpeed - this.obstaclesArray[i].speed) * elapsed) / 1000);
 
             // destroy obstacle if off screen
@@ -207,6 +297,12 @@ Game.prototype.update = function (elapsed, countdownTime) {
     this._car.rotation = this.getCarRotation();
     this._car.position.x += this.getCarPosition();
 
+    // position explosion
+    this._explosion.position = {
+        x: this._car.position.x - this._explosion.size.width / 2 + this._car.size.width / 2,
+        y: this._car.position.y,
+    }
+
     // edge of the game
     if (this._car.position.x <= 0) {
         this._car.position.x = 0;
@@ -228,6 +324,7 @@ Game.prototype.draw = function () {
     this._grassLeft.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassLeft.position.y + 'px, 0)' });
     this._grassRight.node.css({ '-webkit-transform': 'translate3D(0, ' + this._grassRight.position.y + 'px, 0)' });
     this._car.node.css({ '-webkit-transform': 'translate3D(' + this._car.position.x + 'px, 0, 0) rotateZ(' + this._car.rotation + 'deg)' });
+    this._explosion.node.css({ '-webkit-transform': 'translate3D(' + this._explosion.position.x + 'px, ' + this._explosion.position.y + 'px, 0)' });
 
     if (this.obstaclesArray.length > 0) {
         for (var i = 0; i < this.obstaclesArray.length; i++) {
@@ -329,13 +426,16 @@ Game.prototype.checkCollisions = function () {
         };
         // get front center point of the car
         var carHitpoint = {
-            x: Math.round(this._car.position.x + (this._car.size.width / 2)), // middle of the car
-            y: this._car.position.y // front of the car
+            // middle of the car
+            x: Math.round(this._car.position.x + (this._car.size.width / 2)),
+            // front of the car
+            y: this._car.position.y
         };
         // if both center points are less than obstacle width away and car center point y coordinate is between obstacle y coordinate and obstacle's height trigger collision
         if (Math.abs(obstacleHitpoint.x - carHitpoint.x) < this.obstaclesArray[i].size.width && obstacleHitpoint.y - carHitpoint.y > 0 && obstacleHitpoint.y - carHitpoint.y < this.obstaclesArray[i].size.height) {
             if (!this.collisionDetected) {
                 this.collisionDetected = true;
+                
                 // remember which obstacle is hit, we want to decrease life only once per obstacle
                 this.obstacleHit = this.obstaclesArray[i];
                 this.triggerCollision(this.obstaclesArray[i]);
@@ -353,15 +453,23 @@ Game.prototype.triggerCollision = function (obstacle) {
 
     if (this.life <= 0) {
         this.stopGame();
-    }
+    } else {
+        this.playCollisionAnimation();
+    } 
+};
+
+Game.prototype.playCollisionAnimation = function () {
+    var self = this;
+
+    this._explosion.node.addClass('animated');
+    this._explosion.node.on('webkitAnimationEnd oanimationend msAnimationEnd animationend', function(e) {
+        self._explosion.node.removeClass('animated');
+    });
 };
 
 Game.prototype.stopGame = function () {
     // stop the game and do a cleanup
     window.removeEventListener('deviceorientation', this.deviceOrientation);
-    this.speed = 0;
-    this.currentSpeed = 0;
-    this.stopObstacles = true;
-    this.gameRunning = false;
-    alert('GAME OVER!');
+    this.reset();
+    this.showEnd();
 };
