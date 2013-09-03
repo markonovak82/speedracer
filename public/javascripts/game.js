@@ -39,12 +39,12 @@ function Game (options) {
     this._numLanes = 12;
 
     // game nodes
-    this._gameContainer      = $('.container');
-    this._lifeBar            = $('.lifebar');
-    this._startButton        = $('.menu a');
-    this._playAgainButton    = $('.end a');
-    this._menu               = $('.menu');
-    this._end                = $('.end');
+    this._gameContainer   = $('.container');
+    this._lifeBar         = $('.lifebar');
+    this._startButton     = $('.menu a');
+    this._playAgainButton = $('.end a');
+    this._menu            = $('.menu');
+    this._end             = $('.end');
 
     // socket io object
     this._socket             = io.connect(window.location.hostname);
