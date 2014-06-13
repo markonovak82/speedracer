@@ -20,12 +20,6 @@ app.get('/controls', function (req, res) {
 	res.sendfile(__dirname + '/views/controls.html');
 });	
 
-// uncomment this if the game will be running on heroku
-// io.configure(function () { 
-//   io.set("transports", ["xhr-polling"]); 
-//   io.set("polling duration", 10); 
-// });
-
 // establish connection and listen for turnirng events
 io.sockets.on('connection', function (socket) {
 	socket.on('turning', function (data) {
