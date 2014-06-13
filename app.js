@@ -4,8 +4,7 @@ var express	= require('express'),
 	io 	 	= require('socket.io').listen(server);
 
 // use heroku port or 3000, use static IP so it works on phone too
-server.listen(process.env.PORT || 3000, '192.168.0.82'); // work
-//server.listen(process.env.PORT || 3000, '192.168.11.4'); // home
+server.listen(process.env.PORT || 3000, '192.168.1.3');
 
 // set views and public path
 app.set('views', __dirname + '/views');
@@ -19,11 +18,6 @@ app.get('/', function (req, res) {
 // show controls page
 app.get('/controls', function (req, res) {
 	res.sendfile(__dirname + '/views/controls.html');
-});
-
-// show game page
-app.get('/game', function (req, res) {
-	res.sendfile(__dirname + '/views/game.html');
 });	
 
 // uncomment this if the game will be running on heroku

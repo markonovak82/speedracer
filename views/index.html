@@ -1,11 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+<html>
+<head>
     <meta charset="utf-8">
     <title>Speed Racer</title>
-  </head>
-  <body>
-    <a href="/controls">Controls</a><br>
-    <a href="/game">Game</a>
-  </body>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="center">
+        <div class="container">
+            <div class="menu">
+                <img src="/images/qr-code.png" alt="qr code">
+                <a href="#">Start game</a>
+            </div>
+
+            <div class="end">
+                <a href="#">Play again</a>
+            </div>
+
+            <div class="toolbar">
+                <div class="speed-gauge">
+                    <img src="/images/speed-gauge-pointer.png" alt="speed-gauge-pointer">
+                </div>
+                <ul class="lifebar"></ul>
+            </div>
+
+            <div class="road"></div>
+            <div class="grass left"></div>
+            <div class="grass right"></div>
+            <div class="car"></div>
+            <div class="explosion"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/libs/jquery.js"></script>
+    <script src="/javascripts/helpers.js"></script>
+    <script src="/javascripts/game.js"></script>
+</body>
 </html>
