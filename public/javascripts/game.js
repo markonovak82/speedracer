@@ -213,8 +213,7 @@ Game.prototype.start = function () {
 Game.prototype.tick = function () {
     var drawn,
         elapsed,
-        currentTime,
-        countdownTime;
+        currentTime;
 
     if (this.gameRunning)
         this._rafId = requestAnimationFrame(this.tick);
@@ -223,11 +222,10 @@ Game.prototype.tick = function () {
     if (this.lastUpdateTime == null)
         this.lastUpdateTime = currentTime;
 
-    elapsed       = currentTime - this.lastUpdateTime;
-    countdownTime = currentTime - this.startTime
+    elapsed = currentTime - this.lastUpdateTime;
 
     // update physics
-    this.update(elapsed, countdownTime);
+    this.update(elapsed);
 
     // redraw all objects positions
     this.draw();
@@ -235,7 +233,7 @@ Game.prototype.tick = function () {
     this.lastUpdateTime = currentTime;    
 };
 
-Game.prototype.update = function (elapsed, countdownTime) {
+Game.prototype.update = function (elapsed) {
     if (this.speed < this._maxSpeed && !this.carTwitching) {
         this.speed += 1;
     } else {
