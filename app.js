@@ -4,7 +4,7 @@ var express	= require('express'),
 	io 	 	= require('socket.io').listen(server);
 
 // use heroku port or 3000, use static IP so it works on phone too
-server.listen(process.env.PORT || 3000, '192.168.1.3');
+server.listen(process.env.PORT || 3000, '192.168.1.5');
 
 // set views and public path
 app.set('views', __dirname + '/views');
