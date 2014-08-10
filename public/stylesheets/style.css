@@ -112,8 +112,6 @@ body {
 		width: 100%;
 		height: 2048px;
 		background: url(/images/road.png) repeat;
-		background-size: 25%;
-		/*-webkit-transform: 'translate3d(0, -1024px, 0)';*/
 		z-index: 50;
 	}
 	.grass {
@@ -123,7 +121,6 @@ body {
 		height: 2048px;
 		background: url(/images/grass.png) repeat;
 		background-size: 80%;
-		/*-webkit-transform: 'translate3d(0, -1024px, 0)';*/
 		z-index: 51;
 	}
 		.grass.left {
