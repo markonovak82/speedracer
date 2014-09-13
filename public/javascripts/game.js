@@ -128,6 +128,25 @@ function Game (options) {
     this.tick = bind(this, this.tick);
 }
 
+Game.prototype.deviceOrientation = function (e) {
+    var wheelTotal = 0;
+
+    this._slidingWindow = 3;
+    this.wheelArray     = [];
+
+    if (e.beta < 90 && e.beta > -90)
+        this.wheelArray.push(e.beta);
+
+    if (this.wheelArray.length > this._slidingWindow) 
+        this.wheelArray.splice(0,1);
+
+    for (var i = 0; i < this.wheelArray.length; i++) {
+        wheelTotal += this.wheelArray[i];
+    }
+
+    this.wheelPosition = Math.round(wheelTotal / this.wheelArray.length);
+};
+
 Game.prototype.reset = function () {
     this.speed              = 0;
     this.currentSpeed       = 0;
@@ -162,6 +181,8 @@ Game.prototype.init = function () {
         self.hideEnd();
         self.start();
     });
+
+    window.addEventListener('deviceorientation', this.deviceOrientation.bind(this));
 };
 
 Game.prototype.hideMenu = function () {
