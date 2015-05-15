@@ -1,0 +1,89 @@
+/**
+ * Celtra theme for reveal.js.
+ *
+ * Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(../../lib/font/source-sans-pro/source-sans-pro.css);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #222;
+
+$mainColor: #c7c7c7;
+$headingColor: #d9d9f9;
+
+$mainFontSize: 38px;
+$mainFont: Avenir, Helvetica, sans-serif;
+$headingFont: Avenir, Helvetica, sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: light;
+$linkColor: #d9d9f9;
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+section.has-light-background {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: #222;
+	}
+}
+
+.reveal section img {
+    margin: 15px 0px;
+}
+
+.half ul:first-child {
+    list-style: none;
+    float: left;
+    width: 50%;
+    margin: 0;
+    text-align: right;
+    padding-right: 40px;
+    box-sizing: border-box;
+    opacity: 0.5;
+    font-size: 28px;
+}
+
+.half ul:last-child {
+    list-style: none;
+    float: right;
+    width: 50%;
+    margin: 0;
+    font-size: 28px;
+}
+
+.half ul li {
+    margin-bottom: 10px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 2em;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 0.02em;
+    font-size: 0.3em !important;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------

@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Celtra Webinar - Custom Development in AdCreator</title>
+
+		<meta name="description" content="Custom coding practices in AdCreator">
+		<meta name="author" content="Marko Novak">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/celtra.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background="images/bg.jpg">
+					<h2>Custom Development in AdCreator 4</h2>
+					<p style="line-height:1;">
+						<small><a href="mailto:marko@celtra.com">Marko Novak</a> - Senior Developer</small><br>
+						<!--<small><a href="mailto:kyle@celtra.com">Kyle Madden</a> - Ad Operations Specialist</small>-->
+					</p>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Environment</h2>
+					<ul>
+						<li>HTML5</li>
+						<li>JavaScript</li>
+						<li>CSS3</li>
+						<li>Mobile web &amp; WebView</li>
+					</ul>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Structure</h2>
+					<ul>
+						<li>Creative</li>
+						<li>Units</li>
+						<li>Screens</li>
+						<li>Screen Objects (components)</li>
+						<li>Events</li>
+						<li>Actions</li>
+					</ul>
+
+					<aside class="notes">
+				        Go through this entities in AdCreator by creating new ad and showing UI.
+				    </aside>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Custom development tools</h2>
+					<ul>
+						<li>Execute JS action</li>
+						<li>Frame DIV component</li>
+					</ul>
+
+					<aside class="notes">
+						Show them in AdCreator.
+					</aside>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Scope</h2>
+					<ul>
+						<li>creative</li>
+						<li>unit</li>
+						<li>screen</li>
+						<li>ctx</li>
+						<li>div <span class="darker">(only in Frame DIV)</span></li>
+						<li>this</li>
+						<li>c()</li>
+					</ul>
+
+					<aside class="notes">
+						Console.log() them in AdCreator.
+					</aside>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Timing</h2>
+					<p>When does your code execute in...</p>
+					<ul>
+						<li>Frame/DIV component?</li>
+						<li>ExecuteJS action?</li>
+					</ul>
+
+					<aside class="notes">
+						Show how c() affects the creative.
+					</aside>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Selecting objects</h2>
+					<p>Use find and findAll functions to get screen objects.</p>
+					<pre><code data-trim contenteditable>
+var screen = unit.find("screenName");
+var object = screen.find("objectName");
+
+var objects = unit.findAll("objectsName");
+var objects = screen.findAll("objectsName");
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Accessing properties &amp; methods</h2>
+					<pre><code data-trim contenteditable>
+var object = screen.find("objectName");
+
+var objectPosition = object.position;
+var objectSize = object.size;
+
+object.setPosition(10, 20);
+object.setSize(200, 200);
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Accessing DOM node</h2>
+					<pre><code data-trim contenteditable>
+var DOMNode = object.node;
+
+object.getNode(function () {
+    // screen object's DOM node
+    var node = object.node;
+
+    // frame DIV's DOM node
+    var div = object.node.firstChild;
+});
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Calling Actions</h2>
+					<p>ctx, args, callback</p>
+					<pre><code data-trim contenteditable>
+object.showAction(ctx, {}, c);
+
+unit.goToURLAction(ctx, {
+    "url"         : "http://celtra.com",
+    "reportLabel" : "Open Celtra Website"
+}, noop);
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>LoadJS</h2>
+					<p>Load and execute a remote JS file</p>
+					<pre><code data-trim contenteditable>
+loadJS("http://example.com/my.js", function () {
+    window.myClass = new MyClass();
+});
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>LoadJSONP</h2>
+					<p>Load data from a JSONP service, avoid SO policy</p>
+					<pre><code data-trim contenteditable>
+loadJSONP("http://example.com/jsonp", {
+    paramName : "callback",
+    cbName    : "_jsonp312312312"
+}, function (response) {
+    console.log(response);
+});
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Actions Sets</h2>
+					<ul>
+						<li>predefined complex creative experiences</li>
+						<li>reusable</li>
+						<li>triggered on demand</li>
+					</ul>
+					<pre><code data-trim contenteditable>
+screen.triggerAction(ctx, {
+  "eventName": "Fade Screen Objects",
+}, function () {
+  console.log("action set executed");
+});
+					</code></pre>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Layers</h2>
+					<ul>
+						<li>AdCreator (safe)</li>
+						<li>Celtra JS API (safe)</li>
+						<li>DOM (not so safe)</li>
+					</ul>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>Development Setup</h2>
+					<ul>
+						<li>External JS files</li>
+						<li>Make an instance of your object</li>
+						<li>Make it available through unit</li>
+					</ul>
+				</section>
+
+				<section data-background="images/bg.jpg">
+					<h2>More Information</h2>
+					<div class="half">
+						<ul>
+							<li>Website</li>
+							<li>Knowledge Base</li>
+							<li>Analytics Glossary</li>
+							<li>Celtra Demo Ads</li>
+							<li>Ad Gallery</li>
+							<li>Facebook</li>
+							<li>Twitter</li>
+							<li>More Info</li>
+						</ul>
+						<ul>
+							<li>celtra.com</li>
+							<li>celtra.com/knowledge</li>
+							<li>celtra.com/adcreator/glossary</li>
+							<li>sample.celtra.com/demo</li>
+							<li>celtra.com/gallery</li>
+							<li>facebook.com/celtra</li>
+							<li>@CeltraMobile</li>
+							<li>info@celtra.com</li>
+						</ul>
+					</div>
+				</section>
+			</div>
+
+			<div class="footer">&copy; 2015 Celtra Inc. All rights reserved.</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
