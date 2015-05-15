@@ -47,7 +47,7 @@ function Game (options) {
     this._end             = $('.end');
 
     // socket io object
-    this._socket             = io.connect(window.location.hostname);
+    this._socket = io.connect(window.location.hostname);
 
     // road object
     this._road = {
