@@ -125,7 +125,7 @@ function Game (options) {
     this.reset();
 
     // start tick aka gameloop
-    this.tick = bind(this, this.tick);
+    this.tick = this.tick.bind(this);
 }
 
 Game.prototype.reset = function () {

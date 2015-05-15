@@ -6,12 +6,6 @@ function getRandom (from,to) {
     return Math.floor(Math.random() * (to - from + 1) + from);
 }
 
-function bind (ctx, fn) {
-    return function () {
-        fn.apply(ctx, arguments);
-    };
-}
-
 (function() {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
